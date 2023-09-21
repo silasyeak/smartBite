@@ -1,32 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LandingPage from './components/LandingPage';
-import LoginPage from './components/LoginPage';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+export default function LandingPage({navigation}) {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false
-        }}
-      >
-        <Stack.Screen
-          name="Home"
-          component={LandingPage}
-        />
-        <Stack.Screen
-          name="LoginPage"
-          component={LoginPage}
-        />
+    <View style={styles.container}>
+      <Image source={require('../assets/smartbiteLogo.png')} style={styles.image} />
+      <StatusBar style="auto" />
+      <Button
+        title="Go to Login"
+        onPress={() => navigation.navigate('LoginPage')}
+      />
 
-      </Stack.Navigator>
-    </NavigationContainer>
+    </View>
+    
   );
 }
 
