@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, Image } from 'react-native';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Image source={require('./assets/smartbiteLogo.png')} style={styles.image} />
       <StatusBar style="auto" />
     </View>
   );
@@ -17,4 +18,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  image: {
+    width: 300,  // Or whatever size you need
+    height: 300, // Or whatever size you need
+    resizeMode: 'contain' // or 'stretch', 'cover', etc.
+  }
 });
