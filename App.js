@@ -26,7 +26,7 @@ export default function App() {
           component={LoginPage}
         />
         <Stack.Screen
-          name = "RegistrationPage"
+          name="RegistrationPage"
           component={RegistrationPage}
         />
 
