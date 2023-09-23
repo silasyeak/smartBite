@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, Image, Button } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
@@ -12,9 +11,15 @@ export default function LandingPage({navigation}) {
       <Image source={require('../assets/smartbiteLogo.png')} style={styles.image} />
       <StatusBar style="auto" />
       <Button
-        title="Go to Login"
+        title="Login"
         onPress={() => navigation.navigate('LoginPage')}
       />
+      <Button
+        title= "Register"
+        onPress={() => navigation.navigate('RegistrationPage')}
+      />
+
+
 
     </View>
     
