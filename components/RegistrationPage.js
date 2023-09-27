@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import LandingPage from './LandingPage';
+import { useNavigation } from '@react-navigation/native';
 
 const RegistrationPage = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigation = useNavigation();
 
     const handleRegister = () => {
         // Do the registration logic here (e.g., send to backend)
@@ -40,7 +41,7 @@ const RegistrationPage = () => {
             />
             <View style={styles.horizontalStack}>
                 <Button title="Register" onPress={handleRegister} />
-                <Button title="Home" onPress={LandingPage} />
+                <Button title="Home" onPress={() => navigation.navigate('LandingPage')} />
             </View>
 
 

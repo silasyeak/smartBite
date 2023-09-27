@@ -10,6 +10,7 @@ const LoginPage = () => {
     const handleLogin = () => {
         // Do the login logic here (e.g., send to backend)
         Alert.alert('Login Success', `Welcome back!`);
+        navigation.navigate('ProfilePage')
     };
 
     return (

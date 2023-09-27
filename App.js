@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import RegistrationPage from './components/RegistrationPage';
+import ProfilePage from './components/ProfilePage';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,7 +19,7 @@ export default function App() {
         }}
       >
         <Stack.Screen
-          name="Home"
+          name="LandingPage"
           component={LandingPage}
         />
         <Stack.Screen
@@ -28,6 +29,10 @@ export default function App() {
         <Stack.Screen
           name="RegistrationPage"
           component={RegistrationPage}
+        />
+        <Stack.Screen
+          name="ProfilePage"
+          component={ProfilePage}
         />
 
       </Stack.Navigator>
