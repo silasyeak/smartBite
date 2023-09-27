@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, SafeAreaView } from 'react-native';
 import Picker from 'react-native-picker';
 
 class ProfilePage extends React.Component {
@@ -22,6 +22,9 @@ class ProfilePage extends React.Component {
 
     render() {
         return (
+            <SafeAreaView style={styles.container}>
+
+            
             <View style={styles.container}>
                 <Text style={styles.title}>Profile</Text>
 
@@ -71,6 +74,8 @@ class ProfilePage extends React.Component {
 
                 <Button title="Submit" onPress={this.handleSubmit} />
             </View>
+
+            </SafeAreaView>
         );
     }
 }

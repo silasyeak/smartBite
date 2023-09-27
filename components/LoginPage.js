@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const LoginPage = () => {
@@ -33,11 +33,13 @@ const LoginPage = () => {
                 secureTextEntry
             />
             <View style={styles.horizontalStack}>
-                <Button title="Login" onPress={handleLogin} />
-                <Button
-                    title="Register"
-                    onPress={() => navigation.navigate('RegistrationPage')}
-                />
+                <Pressable style = {styles.button} onPress={handleLogin}>
+                    <Text style = {styles.text}>Login</Text>
+                </Pressable>
+                <Pressable style = {styles.button} onPress={() => navigation.navigate('RegistrationPage')}>
+                    <Text style = {styles.text}>Register</Text>
+                </Pressable>
+                
             </View>
 
 
@@ -72,6 +74,23 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#fff',
     },
+    button:{
+        alignItems:'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation:3,
+        backgroundColor: 'black',
+        borderRadius: 10,
+    },
+    text:{
+        fontSize: 16,
+        lineHeight: 21,
+        fontWeight: 'bold', 
+        letterSpacing: 0.25,
+        color: 'white',
+    }
 });
 
 export default LoginPage;
