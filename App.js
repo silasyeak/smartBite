@@ -7,6 +7,7 @@ import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import RegistrationPage from './components/RegistrationPage';
 import ProfilePage from './components/ProfilePage';
+import AnalysisPage from './components/AnalysisPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ export default function App() {
           headerShown: false
         }}
       >
+
         <Stack.Screen
           name="LandingPage"
           component={LandingPage}
@@ -25,6 +27,11 @@ export default function App() {
         <Stack.Screen
           name="LoginPage"
           component={LoginPage}
+        /> 
+
+        <Stack.Screen
+          name="AnalysisPage"
+          component={AnalysisPage}
         />
         <Stack.Screen
           name="RegistrationPage"
