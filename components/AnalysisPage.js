@@ -8,10 +8,45 @@ import {
   TouchableOpacity,
   Platform, StatusBar
 } from 'react-native';
-import { VictoryBar, VictoryChart, VictoryTheme } from "victory-native";
+import { VictoryPie } from "victory-native";
+import { PieChart } from "react-native-chart-kit";
+import { db } from '../firebase';
+import { doc, getDocs, collection, onSnapshot } from 'firebase/firestore';
 
 const AnalysisPage = ({ navigation }) => {
   const [healthScore, setHealthScore] = useState(0);
+  const [profileData, setProfileData] = useState([]);
+  const [image, setImage] = useState();
+
+  useEffect(() => {
+    let getData;
+
+    const fetchProfileData = async () => {
+      const data = await getDocs(collection(db, 'users')).then(
+        (snapshot) => snapshot.docs.map((doc) => doc.id)
+      );
+      setProfileData(data);
+    };
+
+    fetchProfileData();
+
+    return getData;
+  }, [db]);
+
+  useEffect(() => {
+    const score = calculateHealthScore();
+    setHealthScore(score);
+  }, []);
+
+  useEffect(() => {
+    if (healthScore <= 5) {
+      setImage(require('../assets/not-recommended.png'));
+    } else if (healthScore >= 6) {
+      setImage(require('../assets/neutral.png'));
+    } else if (healthScore >= 7) {
+      setImage(require('../assets/recommended.png'));
+    }
+  }, [healthScore])
 
   const handleLeftButtonPress = () => {
     navigation.goBack();
@@ -38,12 +73,45 @@ const AnalysisPage = ({ navigation }) => {
     protein: 5.6,
   };
 
-  const data = [
-    { nutrient: 'Protein', grams: nutritionData.protein },
-    { nutrient: 'Fats', grams: nutritionData.totalFat },
-    { nutrient: 'Sugar', grams: nutritionData.sugars },
-    { nutrient: 'Carbs', grams: nutritionData.totalCarbohydrates }
+  const pieData = [
+    {
+      name: "- Protein",
+      value: Math.round(((nutritionData.protein * 4)/nutritionData.calories) * 100),
+      color: "#74bc1c",
+      legendFontColor: "#181818",
+      legendFontSize: 9
+    },
+    {
+      name: "- Fat",
+      value: Math.round(((nutritionData.totalFat * 9)/nutritionData.calories) * 100),
+      color: "#cc34ac",
+      legendFontColor: "#181818",
+      legendFontSize: 9
+    },
+    {
+      name: "- Sugar",
+      value: Math.round(((nutritionData.sugars * 4)/nutritionData.calories) * 100),
+      color: "#fca424",
+      legendFontColor: "#181818",
+      legendFontSize: 9
+    },
+    {
+      name: "- Carbs",
+      value: Math.round(((nutritionData.totalCarbohydrates * 4)/nutritionData.calories) * 100),
+      color: "#84d4ec",
+      legendFontColor: "#181818",
+      legendFontSize: 9
+    }
   ];
+  const chartConfig = {
+    backgroundGradientFrom: "#1E2923",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#08130D",
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    strokeWidth: 1,
+    barPercentage: 0.5
+  };
 
   const bmr = 1600;
   const gender = 'Male';
@@ -76,8 +144,8 @@ const AnalysisPage = ({ navigation }) => {
 
     if (highBloodPressure) {
       if (totalFatPercent < (0.28 * bmr)) score += 1;
-      if (saturatedFatPercent < (0.06 * bmr)) score += 1;
-      if (transFat === 0) score += 1;
+      if (saturatedFatPercent < (0.06 * bmr)) score += 3;
+      if (transFat === 0) score += 3;
       if (cholesterol < 3) score += 1;
       if (sodium < 15) score += 1;
       if (totalCarbohydratesPercent === (0.55 * bmr)) score += 1;
@@ -90,6 +158,8 @@ const AnalysisPage = ({ navigation }) => {
       } else {
         if (sugars < 25) score += 1;
       }
+
+      return Math.round((score/14) * 10);
     }
 
     if (highCholesterol) {
@@ -108,15 +178,11 @@ const AnalysisPage = ({ navigation }) => {
       } else {
         if (dietaryFiber >= 30 && dietaryFiber <= 38) score += 1;
       }
+
+      return score;
     }
-
-    return score;
+    
   };
-
-  useEffect(() => {
-    const score = calculateHealthScore();
-    setHealthScore(score);
-  }, []);
 
   return (
     <SafeAreaView style={styles.view}>
@@ -150,16 +216,17 @@ const AnalysisPage = ({ navigation }) => {
               />
             </View>
             <View style={[styles.box, { width: 160, height: 160 }]}>
-              <VictoryChart
-                padding={{ top: 40, bottom: 60, left: 70, right: 55 }}
-                width={230} height={200}
-                domainPadding={3}
-                theme={VictoryTheme.material}
-              >
-                <VictoryBar
-                  style={{ data: { fill: "#c43a31" } }}
-                  data={data} x="nutrient" y="grams" />
-              </VictoryChart>
+            <Text style={{ fontSize: 14, marginBottom: 5, textAlign: 'center' }}>% of nutrients based on total calories</Text>
+              <PieChart
+                data={pieData}
+                width={160}
+                height={100}
+                chartConfig={chartConfig}
+                accessor="value"
+                backgroundColor="transparent"
+                paddingLeft='5'
+                absolute
+              />
             </View>
           </View>
         </View>
@@ -173,7 +240,7 @@ const AnalysisPage = ({ navigation }) => {
           </View>
           <Text style={styles.smallText}>Overall Rating</Text>
           <Image
-            source={require('../assets/recommended.png')}
+            source={image}
             style={styles.recommended}
           />
 

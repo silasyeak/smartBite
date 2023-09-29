@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import AnalysisPage from './components/AnalysisPage';
+import RegistrationPage from './components/RegistrationPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,18 +18,23 @@ export default function App() {
           headerShown: false
         }}
       >
-        {/* <Stack.Screen
+
+        <Stack.Screen
           name="LandingPage"
           component={LandingPage}
         />
         <Stack.Screen
           name="LoginPage"
           component={LoginPage}
-        /> */}
+        /> 
 
         <Stack.Screen
           name="AnalysisPage"
           component={AnalysisPage}
+        />
+        <Stack.Screen
+          name="RegistrationPage"
+          component={RegistrationPage}
         />
 
       </Stack.Navigator>
