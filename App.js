@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
+import AnalysisPage from './components/AnalysisPage';
 import RegistrationPage from './components/RegistrationPage';
 import ProfilePage from './components/ProfilePage';
 import AnalysisPage from './components/AnalysisPage';
