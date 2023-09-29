@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, SafeAreaView } from 'react-native';
 import Picker from 'react-native-picker';
 
 class ProfilePage extends React.Component {
@@ -72,7 +72,13 @@ class ProfilePage extends React.Component {
                     <Picker.Item label="Weight Loss" value="Weight Loss" />
                 </Picker> */}
 
-                <Button title="Submit" onPress={this.handleSubmit} />
+                
+            <View style={styles.horizontalStack}>
+                <Pressable style = {styles.button1} onPress={this.handleSubmit}>
+                    <Text style = {styles.text}>Submit</Text>
+                </Pressable>
+                
+            </View>
             </View>
 
             </SafeAreaView>
@@ -104,6 +110,34 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 20,
     },
+    button1: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: '#154B2D',
+        borderRadius: 10,
+        marginRight: 10,  
+      },
+      button2:{
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: '#94D533',
+        borderRadius: 10,
+      },
+      text:{
+        fontSize: 16,
+        lineHeight: 21,
+        fontWeight: 'bold', 
+        letterSpacing: 0.25,
+        color: 'white',
+    }
 });
 
 export default ProfilePage;

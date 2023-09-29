@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const RegistrationPage = () => {
@@ -39,10 +39,16 @@ const RegistrationPage = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <View style={styles.horizontalStack}>
-                <Button title="Register" onPress={handleRegister} />
-                <Button title="Home" onPress={() => navigation.navigate('LandingPage')} />
+               <View style={styles.horizontalStack}>
+                <Pressable style = {styles.button1} onPress={handleRegister}>
+                    <Text style = {styles.text}>Register</Text>
+                </Pressable>
+                <Pressable style = {styles.button2} onPress={() => navigation.navigate('LandingPage')}>
+                    <Text style = {styles.text}>Home</Text>
+                </Pressable>
+                
             </View>
+    
 
 
         </View>
@@ -76,6 +82,34 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#fff',
     },
+    button1: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: '#154B2D',
+        borderRadius: 10,
+        marginRight: 10,  
+      },
+      button2:{
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: '#94D533',
+        borderRadius: 10,
+      },
+    text:{
+        fontSize: 16,
+        lineHeight: 21,
+        fontWeight: 'bold', 
+        letterSpacing: 0.25,
+        color: 'white',
+    }
 });
 
 export default RegistrationPage;
