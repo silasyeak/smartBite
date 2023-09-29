@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
+import AnalysisPage from './components/AnalysisPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,13 +17,18 @@ export default function App() {
           headerShown: false
         }}
       >
-        <Stack.Screen
-          name="Home"
+        {/* <Stack.Screen
+          name="LandingPage"
           component={LandingPage}
         />
         <Stack.Screen
           name="LoginPage"
           component={LoginPage}
+        /> */}
+
+        <Stack.Screen
+          name="AnalysisPage"
+          component={AnalysisPage}
         />
 
       </Stack.Navigator>
