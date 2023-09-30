@@ -7,6 +7,7 @@ import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import AnalysisPage from './components/AnalysisPage';
 import RegistrationPage from './components/RegistrationPage';
+import ProfilePage from './components/ProfilePage';
 import {decode, encode} from 'base-64'
 
 if (!global.btoa) {  global.btoa = encode }
@@ -24,6 +25,7 @@ export default function App() {
         }}
       >
 
+
         <Stack.Screen
           name="LandingPage"
           component={LandingPage}
@@ -31,18 +33,21 @@ export default function App() {
         <Stack.Screen
           name="LoginPage"
           component={LoginPage}
-        />
+        /> 
 
         <Stack.Screen
           name="RegistrationPage"
           component={RegistrationPage}
+        />
+        <Stack.Screen
+          name="ProfilePage"
+          component={ProfilePage}
         />
 
         <Stack.Screen
           name="AnalysisPage"
           component={AnalysisPage}
         />
-
 
       </Stack.Navigator>
     </NavigationContainer>
