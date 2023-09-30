@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Platform, StatusBar
 } from 'react-native';
-import { VictoryPie } from "victory-native";
+import { useFonts } from 'expo-font';
 import { PieChart } from "react-native-chart-kit";
 import { db } from '../firebase';
 import { doc, getDocs, collection, onSnapshot } from 'firebase/firestore';
@@ -17,6 +17,12 @@ const AnalysisPage = ({ navigation }) => {
   const [healthScore, setHealthScore] = useState(0);
   const [profileData, setProfileData] = useState([]);
   const [image, setImage] = useState();
+
+  const customFonts = {
+    Montserrat: require('../assets/fonts/Montserrat.ttf'),
+  };
+  
+  const [isFontsLoaded] = useFonts(customFonts);
 
   useEffect(() => {
     let getData;
@@ -75,34 +81,35 @@ const AnalysisPage = ({ navigation }) => {
 
   const pieData = [
     {
-      name: "- Protein",
-      value: Math.round(((nutritionData.protein * 4)/nutritionData.calories) * 100),
+      name: "% Protein",
+      value: Math.round(((nutritionData.protein * 4) / nutritionData.calories) * 100),
       color: "#74bc1c",
       legendFontColor: "#181818",
       legendFontSize: 9
     },
     {
-      name: "- Fat",
-      value: Math.round(((nutritionData.totalFat * 9)/nutritionData.calories) * 100),
+      name: "% Fat",
+      value: Math.round(((nutritionData.totalFat * 9) / nutritionData.calories) * 100),
       color: "#cc34ac",
       legendFontColor: "#181818",
       legendFontSize: 9
     },
     {
-      name: "- Sugar",
-      value: Math.round(((nutritionData.sugars * 4)/nutritionData.calories) * 100),
+      name: "% Sugar",
+      value: Math.round(((nutritionData.sugars * 4) / nutritionData.calories) * 100),
       color: "#fca424",
       legendFontColor: "#181818",
       legendFontSize: 9
     },
     {
-      name: "- Carbs",
-      value: Math.round(((nutritionData.totalCarbohydrates * 4)/nutritionData.calories) * 100),
+      name: "% Carbs",
+      value: Math.round(((nutritionData.totalCarbohydrates * 4) / nutritionData.calories) * 100),
       color: "#84d4ec",
       legendFontColor: "#181818",
       legendFontSize: 9
     }
   ];
+  
   const chartConfig = {
     backgroundGradientFrom: "#1E2923",
     backgroundGradientFromOpacity: 0,
@@ -118,6 +125,9 @@ const AnalysisPage = ({ navigation }) => {
   const highBloodPressure = true;
   const highCholesterol = false;
   const pcos = false;
+  const diabetes = false;
+  const obesity = false;
+  const heartDisease = false;
 
   const calculateHealthScore = () => {
     const {
@@ -132,6 +142,9 @@ const AnalysisPage = ({ navigation }) => {
       sugars,
       protein,
       vitaminD,
+	  calcium,
+	  iron,
+	  potassium
     } = nutritionData;
 
     totalFatPercent = (totalFat * 9) / calories;
@@ -144,14 +157,14 @@ const AnalysisPage = ({ navigation }) => {
 
     if (highBloodPressure) {
       if (totalFatPercent < (0.28 * bmr)) score += 1;
-      if (saturatedFatPercent < (0.06 * bmr)) score += 3;
-      if (transFat === 0) score += 3;
+      if (saturatedFatPercent < (0.06 * bmr)) score += 1;
+      if (transFat === 0) score += 1;
       if (cholesterol < 3) score += 1;
-      if (sodium < 15) score += 1;
+      if (sodium < 15) score += 3;
       if (totalCarbohydratesPercent === (0.55 * bmr)) score += 1;
       if (dietaryFiber >= 28 && dietaryFiber <= 30) score += 1;
       if (proteinPercent === (0.18 * bmr)) score += 1;
-      if (vitaminD) score += 1;
+      if (vitaminD || calcium || iron || potassium > 47) score += 1;
 
       if (gender === 'Male') {
         if (sugars < 37.5) score += 1;
@@ -159,19 +172,19 @@ const AnalysisPage = ({ navigation }) => {
         if (sugars < 25) score += 1;
       }
 
-      return Math.round((score/14) * 10);
+      return Math.round((score / 12) * 10);
     }
 
     if (highCholesterol) {
       if (totalFatPercent < (0.3 * bmr)) score += 1;
-      if (saturatedFatPercent < (0.07 * bmr)) score += 1;
-      if (transFat === 0) score += 1;
+      if (saturatedFatPercent < (0.07 * bmr)) score += 3;
+      if (transFat === 0) score += 3;
       if (cholesterol < 2.5) score += 1;
       if (sodium < 23) score += 1;
       if (totalCarbohydratesPercent >= (0.45 * bmr) && totalCarbohydratesPercent <= (0.65 * bmr)) score += 1;
       if (sugarsPercent <= (0.1 * bmr)) score += 1;
       if (proteinPercent >= (0.1 * bmr) && protein <= (0.35 * bmr)) score += 1;
-      if (vitaminD) score += 1;
+      if (vitaminD || calcium || iron || potassium) score += 1;
 
       if (gender === 'Male') {
         if (dietaryFiber >= 21 && dietaryFiber <= 25) score += 1;
@@ -179,126 +192,193 @@ const AnalysisPage = ({ navigation }) => {
         if (dietaryFiber >= 30 && dietaryFiber <= 38) score += 1;
       }
 
-      return score;
+      return Math.round((score / 14) * 10);
     }
-    
+	
+	if (pcos) {
+      if (totalFatPercent < (0.2 * bmr)) score += 3;
+      if (saturatedFatPercent < (0.1 * bmr)) score += 1;
+      if (transFat === 0) score += 1;
+      if (cholesterol < 3) score += 1;
+      if (sodium >= 15 && sodium <= 20) score += 1;
+      if (totalCarbohydratesPercent >= (0.4 * bmr) && totalCarbohydratesPercent <= (0.5 * bmr)) score += 1;
+	  if (dietaryFiber >= 25 && dietaryFiber <= 30) score += 1;
+      if (sugarsPercent <= (0.1 * bmr)) score += 3;
+      if (proteinPercent >= (0.15 * bmr) && protein <= (0.2 * bmr)) score += 1;
+      if (vitaminD || calcium || iron || potassium) score += 1;
+
+      return Math.round((score / 14) * 10);
+    }
+	
+	if (diabetes) {
+      if (totalFatPercent > (0.2 * bmr) && totalFatPercent < (0.35 * bmr)) score += 1;
+      if (saturatedFatPercent < (0.07 * bmr)) score += 1;
+      if (transFat === 0) score += 1;
+      if (cholesterol < 3) score += 1;
+      if (sodium < 20) score += 1;
+      if (totalCarbohydratesPercent < (0.26 * bmr)) score += 3;
+	  if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
+      if (sugarsPercent <= (0.05 * bmr)) score += 3;
+      if (proteinPercent >= (0.1 * bmr) && protein <= (0.2 * bmr)) score += 1;
+      if (vitaminD || calcium || iron || potassium) score += 1;
+
+      return Math.round((score / 14) * 10);
+    }
+	
+	if (obesity) {
+      if (totalFatPercent > (0.2 * bmr) && totalFatPercent < (0.25 * bmr)) score += 3;
+      if (saturatedFatPercent < (0.1 * bmr)) score += 1;
+      if (transFat === 0) score += 1;
+      if (cholesterol < 3) score += 1;
+      if (sodium < 23) score += 1;
+      if (totalCarbohydratesPercent >= (0.45 * bmr) && totalCarbohydratesPercent <= (0.65 * bmr)) score += 1;
+	  if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
+      if (sugarsPercent <= (0.1 * bmr)) score += 1;
+      if (proteinPercent >= (0.1 * bmr) && protein <= (0.35 * bmr)) score += 3;
+      if (vitaminD || calcium || iron || potassium) score += 1;
+
+      return Math.round((score / 14) * 10);
+    }
+	
+	if (heartDisease) {
+      if (totalFatPercent > (0.25 * bmr) && totalFatPercent < (0.3 * bmr)) score += 1;
+      if (saturatedFatPercent < (0.07 * bmr)) score += 3;
+      if (transFat === 0) score += 1;
+      if (cholesterol < 3) score += 1;
+      if (sodium < 20) score += 3;
+      if (totalCarbohydratesPercent >= (0.45 * bmr) && totalCarbohydratesPercent <= (0.65 * bmr)) score += 1;
+	  if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
+      if (sugarsPercent <= (0.1 * bmr)) score += 1;
+      if (proteinPercent >= (0.1 * bmr) && protein <= (0.35 * bmr)) score += 1;
+      if (vitaminD || calcium || iron || potassium) score += 1;
+
+      return Math.round((score / 14) * 10);
+    }
+
   };
 
-  return (
-    <SafeAreaView style={styles.view}>
-      <View style={styles.navbar}>
-        <TouchableOpacity
-          style={[styles.box, { width: 40, height: 40 }]}
-          onPress={handleLeftButtonPress}>
-          <Image
-            source={require('../assets/arrow.png')}
-            style={{ width: 15, height: 15, resizeMode: 'contain' }}
-          />
-        </TouchableOpacity>
-        <Text style={styles.title}>Analysis</Text>
-        <TouchableOpacity
-          style={[styles.box, { width: 40, height: 40 }]}
-          onPress={handleRightButtonPress}>
-          <Image
-            source={require('../assets/scan.png')}
-            style={{ width: 25, height: 25, resizeMode: 'contain' }}
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.container}>
-        <View style={{ marginBottom: 10 }}>
-          <Text style={styles.foodName}>Bread</Text>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <View style={[styles.box, { width: 160, height: 160 }]}>
-              <Image
-                source={{ uri: 'https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/10099606_XL1_20210903.jpg?w=1200&q=70' }}
-                style={{ width: 140, height: 140 }}
-              />
-            </View>
-            <View style={[styles.box, { width: 160, height: 160 }]}>
-            <Text style={{ fontSize: 14, marginBottom: 5, textAlign: 'center' }}>% of nutrients based on total calories</Text>
-              <PieChart
-                data={pieData}
-                width={160}
-                height={100}
-                chartConfig={chartConfig}
-                accessor="value"
-                backgroundColor="transparent"
-                paddingLeft='5'
-                absolute
-              />
-            </View>
-          </View>
-        </View>
-        <View style={styles.rating}>
-          <View style={styles.row}>
-            <Image
-              source={require('../assets/rate.png')}
-              style={{ width: 20, height: 20, marginRight: 7, resizeMode: 'contain' }}
-            />
-            <Text style={styles.healthScore}>{healthScore}/10</Text>
-          </View>
-          <Text style={styles.smallText}>Overall Rating</Text>
-          <Image
-            source={image}
-            style={styles.recommended}
-          />
-
-        </View>
-        <View style={styles.stats}>
-          <View style={styles.icons}>
-            <Image
-              source={require('../assets/halal.png')}
-              style={styles.circle}
-            />
-            <Image
-              source={require('../assets/no-meat.png')}
-              style={styles.circle}
-            />
-            <Image
-              source={require('../assets/no-seafood.png')}
-              style={styles.circle}
-            />
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={styles.rowText}>
-              <Image
-                source={require('../assets/good.png')}
-                style={{ width: 15, height: 15, resizeMode: 'contain', margin: 5 }}
-              />
-              <Text style={{ fontSize: 16, marginLeft: 10 }}>High Protein</Text>
-            </View>
-            <View style={styles.rowText}>
-              <Image
-                source={require('../assets/bad.png')}
-                style={{ width: 15, height: 15, resizeMode: 'contain', margin: 5 }}
-              />
-              <Text style={{ fontSize: 16, marginLeft: 10 }}>High Cholesterol</Text>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={styles.rowText}>
-              <Image
-                source={require('../assets/bad.png')}
-                style={{ width: 15, height: 15, resizeMode: 'contain', margin: 5 }}
-              />
-              <Text style={{ fontSize: 16, marginLeft: 10 }}>High Fat</Text>
-            </View>
-
-          </View>
-        </View>
-        <View style={styles.bottom}>
-          <TouchableOpacity style={styles.nextButton} onPress={handlePress}>
+  if (!isFontsLoaded) {
+  }
+  else {
+    return (
+      <SafeAreaView style={styles.view}>
+        <View style={styles.navbar}>
+          <TouchableOpacity
+            style={[styles.box, { width: 40, height: 40 }]}
+            onPress={handleLeftButtonPress}>
             <Image
               source={require('../assets/arrow.png')}
-              style={{ width: 15, height: 15, tintColor: 'white', resizeMode: 'contain', transform: [{ scaleX: -1 }] }}
+              style={{ width: 15, height: 15, resizeMode: 'contain' }}
+            />
+          </TouchableOpacity>
+          <Text style={styles.title}>Analysis</Text>
+          <TouchableOpacity
+            style={[styles.box, { width: 40, height: 40 }]}
+            onPress={handleRightButtonPress}>
+            <Image
+              source={require('../assets/scan.png')}
+              style={{ width: 25, height: 25, resizeMode: 'contain' }}
             />
           </TouchableOpacity>
         </View>
-      </View>
-    </SafeAreaView>
-  );
-};
+        <View style={styles.container}>
+          <View style={{ marginBottom: 10 }}>
+            <Text style={styles.foodName}>Bread</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <View style={[styles.box, { width: 160, height: 160 }]}>
+                <Image
+                  source={{ uri: 'https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/10099606_XL1_20210903.jpg?w=1200&q=70' }}
+                  style={{ width: 140, height: 140 }}
+                />
+              </View>
+              <View style={[styles.box, { width: 160, height: 160 }]}>
+                <Text style={styles.chartText}>
+                  % of nutrients based on total calories
+                </Text>
+                <PieChart
+                  data={pieData}
+                  width={160}
+                  height={95}
+                  chartConfig={chartConfig}
+                  accessor="value"
+                  backgroundColor="transparent"
+                  paddingLeft='5'
+                  absolute
+                />
+              </View>
+            </View>
+          </View>
+          <View style={styles.rating}>
+            <View style={styles.row}>
+              <Image
+                source={require('../assets/rate.png')}
+                style={{ width: 20, height: 20, marginRight: 7, resizeMode: 'contain' }}
+              />
+              <Text style={styles.healthScore}>{healthScore}/10</Text>
+            </View>
+            <Text style={styles.smallText}>Overall Rating</Text>
+            <Image
+              source={image}
+              style={styles.recommended}
+            />
+  
+          </View>
+          <View style={styles.stats}>
+            <View style={styles.icons}>
+              <Image
+                source={require('../assets/halal.png')}
+                style={styles.circle}
+              />
+              <Image
+                source={require('../assets/no-meat.png')}
+                style={styles.circle}
+              />
+              <Image
+                source={require('../assets/no-seafood.png')}
+                style={styles.circle}
+              />
+            </View>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={styles.rowText}>
+                <Image
+                  source={require('../assets/good.png')}
+                  style={{ width: 15, height: 15, resizeMode: 'contain', margin: 5 }}
+                />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>High Protein</Text>
+              </View>
+              <View style={styles.rowText}>
+                <Image
+                  source={require('../assets/bad.png')}
+                  style={{ width: 15, height: 15, resizeMode: 'contain', margin: 5 }}
+                />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>High Cholesterol</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={styles.rowText}>
+                <Image
+                  source={require('../assets/bad.png')}
+                  style={{ width: 15, height: 15, resizeMode: 'contain', margin: 5 }}
+                />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>High Fat</Text>
+              </View>
+  
+            </View>
+          </View>
+          <View style={styles.bottom}>
+            <TouchableOpacity style={styles.nextButton} onPress={handlePress}>
+              <Image
+                source={require('../assets/arrow.png')}
+                style={{ width: 15, height: 15, tintColor: 'white', resizeMode: 'contain', transform: [{ scaleX: -1 }] }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  };
+  }
+
 
 const styles = StyleSheet.create({
   view: {
@@ -334,11 +414,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'Roboto',
   },
   foodName: {
     fontSize: 18,
     marginVertical: 10,
     marginLeft: 20,
+  },
+  chartText: {
+    fontSize: 12, 
+    fontWeight: 'bold', 
+    fontFamily: 'Roboto',
+    marginHorizontal: 20,
+    marginBottom: 5, 
+    textAlign: 'center'
   },
   rating: {
     padding: 15,

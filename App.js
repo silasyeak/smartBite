@@ -7,6 +7,11 @@ import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import AnalysisPage from './components/AnalysisPage';
 import RegistrationPage from './components/RegistrationPage';
+import {decode, encode} from 'base-64'
+
+if (!global.btoa) {  global.btoa = encode }
+
+if (!global.atob) { global.atob = decode }
 
 const Stack = createNativeStackNavigator();
 
@@ -26,16 +31,18 @@ export default function App() {
         <Stack.Screen
           name="LoginPage"
           component={LoginPage}
-        /> 
+        />
+
+        <Stack.Screen
+          name="RegistrationPage"
+          component={RegistrationPage}
+        />
 
         <Stack.Screen
           name="AnalysisPage"
           component={AnalysisPage}
         />
-        <Stack.Screen
-          name="RegistrationPage"
-          component={RegistrationPage}
-        />
+
 
       </Stack.Navigator>
     </NavigationContainer>
