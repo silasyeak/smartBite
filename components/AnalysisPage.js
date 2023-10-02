@@ -21,7 +21,7 @@ const AnalysisPage = ({ navigation }) => {
   const customFonts = {
     Montserrat: require('../assets/fonts/Montserrat.ttf'),
   };
-  
+
   const [isFontsLoaded] = useFonts(customFonts);
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const AnalysisPage = ({ navigation }) => {
       legendFontSize: 9
     }
   ];
-  
+
   const chartConfig = {
     backgroundGradientFrom: "#1E2923",
     backgroundGradientFromOpacity: 0,
@@ -121,6 +121,7 @@ const AnalysisPage = ({ navigation }) => {
   };
 
   const bmr = 1600;
+  const weight = 70;
   const gender = 'Male';
   const highBloodPressure = true;
   const highCholesterol = false;
@@ -128,6 +129,9 @@ const AnalysisPage = ({ navigation }) => {
   const diabetes = false;
   const obesity = false;
   const heartDisease = false;
+  const weightLoss = false;
+  const muscleGain = false;
+  const maintain = false;
 
   const calculateHealthScore = () => {
     const {
@@ -142,9 +146,9 @@ const AnalysisPage = ({ navigation }) => {
       sugars,
       protein,
       vitaminD,
-	  calcium,
-	  iron,
-	  potassium
+      calcium,
+      iron,
+      potassium
     } = nutritionData;
 
     totalFatPercent = (totalFat * 9) / calories;
@@ -174,8 +178,7 @@ const AnalysisPage = ({ navigation }) => {
 
       return Math.round((score / 12) * 10);
     }
-
-    if (highCholesterol) {
+    else if (highCholesterol) {
       if (totalFatPercent < (0.3 * bmr)) score += 1;
       if (saturatedFatPercent < (0.07 * bmr)) score += 3;
       if (transFat === 0) score += 3;
@@ -194,65 +197,122 @@ const AnalysisPage = ({ navigation }) => {
 
       return Math.round((score / 14) * 10);
     }
-	
-	if (pcos) {
+    else if (pcos) {
       if (totalFatPercent < (0.2 * bmr)) score += 3;
       if (saturatedFatPercent < (0.1 * bmr)) score += 1;
       if (transFat === 0) score += 1;
       if (cholesterol < 3) score += 1;
       if (sodium >= 15 && sodium <= 20) score += 1;
       if (totalCarbohydratesPercent >= (0.4 * bmr) && totalCarbohydratesPercent <= (0.5 * bmr)) score += 1;
-	  if (dietaryFiber >= 25 && dietaryFiber <= 30) score += 1;
+      if (dietaryFiber >= 25 && dietaryFiber <= 30) score += 1;
       if (sugarsPercent <= (0.1 * bmr)) score += 3;
       if (proteinPercent >= (0.15 * bmr) && protein <= (0.2 * bmr)) score += 1;
       if (vitaminD || calcium || iron || potassium) score += 1;
 
       return Math.round((score / 14) * 10);
     }
-	
-	if (diabetes) {
+    else if (diabetes) {
       if (totalFatPercent > (0.2 * bmr) && totalFatPercent < (0.35 * bmr)) score += 1;
       if (saturatedFatPercent < (0.07 * bmr)) score += 1;
       if (transFat === 0) score += 1;
       if (cholesterol < 3) score += 1;
       if (sodium < 20) score += 1;
       if (totalCarbohydratesPercent < (0.26 * bmr)) score += 3;
-	  if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
+      if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
       if (sugarsPercent <= (0.05 * bmr)) score += 3;
       if (proteinPercent >= (0.1 * bmr) && protein <= (0.2 * bmr)) score += 1;
       if (vitaminD || calcium || iron || potassium) score += 1;
 
       return Math.round((score / 14) * 10);
     }
-	
-	if (obesity) {
+    else if (obesity) {
       if (totalFatPercent > (0.2 * bmr) && totalFatPercent < (0.25 * bmr)) score += 3;
       if (saturatedFatPercent < (0.1 * bmr)) score += 1;
       if (transFat === 0) score += 1;
       if (cholesterol < 3) score += 1;
       if (sodium < 23) score += 1;
       if (totalCarbohydratesPercent >= (0.45 * bmr) && totalCarbohydratesPercent <= (0.65 * bmr)) score += 1;
-	  if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
+      if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
       if (sugarsPercent <= (0.1 * bmr)) score += 1;
       if (proteinPercent >= (0.1 * bmr) && protein <= (0.35 * bmr)) score += 3;
       if (vitaminD || calcium || iron || potassium) score += 1;
 
       return Math.round((score / 14) * 10);
     }
-	
-	if (heartDisease) {
+    else if (heartDisease) {
       if (totalFatPercent > (0.25 * bmr) && totalFatPercent < (0.3 * bmr)) score += 1;
       if (saturatedFatPercent < (0.07 * bmr)) score += 3;
       if (transFat === 0) score += 1;
       if (cholesterol < 3) score += 1;
       if (sodium < 20) score += 3;
       if (totalCarbohydratesPercent >= (0.45 * bmr) && totalCarbohydratesPercent <= (0.65 * bmr)) score += 1;
-	  if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
+      if (dietaryFiber >= 25 && dietaryFiber <= 38) score += 1;
       if (sugarsPercent <= (0.1 * bmr)) score += 1;
       if (proteinPercent >= (0.1 * bmr) && protein <= (0.35 * bmr)) score += 1;
       if (vitaminD || calcium || iron || potassium) score += 1;
 
       return Math.round((score / 14) * 10);
+    }
+    else {
+      if (weightLoss) {
+        if (totalFatPercent > (0.2 * bmr)) score += 1;
+        if (saturatedFatPercent < (0.1 * bmr)) score += 1;
+        if (transFat === 0) score += 1;
+        if (cholesterol >= 0) score += 1;
+        if (sodium < 23) score += 1;
+        if (totalCarbohydratesPercent < (0.4 * bmr)) score += 1;
+        if (sugarsPercent <= (0.1 * bmr)) score += 1;
+        if (proteinPercent >= (0.25 * bmr) && protein <= (0.3 * bmr)) score += 1;
+        if (vitaminD || calcium || iron || potassium) score += 1;
+
+        if (gender === 'Male') {
+          if (dietaryFiber < 38) score += 1;
+        } else {
+          if (dietaryFiber < 25) score += 1;
+        }
+
+        return score;
+      }
+
+      if (muscleGain) {
+        if (totalFatPercent > (0.2 * bmr) && totalFatPercent < (0.35 * bmr)) score += 1;
+        if (saturatedFatPercent < (0.1 * bmr)) score += 1;
+        if (transFat === 0) score += 1;
+        if (cholesterol >= 0) score += 1;
+        if (sodium < 23) score += 1;
+        if (totalCarbohydratesPercent >= (0.5 * bmr) && totalCarbohydratesPercent <= (0.6 * bmr)) score += 1;
+        if (sugarsPercent >= 0) score += 1;
+        if (protein > 10) score += 1;
+        if (potassium >= 26 && potassium <= 34) score += 1;
+
+        if (gender === 'Male') {
+          if (dietaryFiber < 38) score += 1;
+        } else {
+          if (dietaryFiber < 25) score += 1;
+        }
+
+        return score;
+      }
+
+      if (maintain) {
+        if (totalFatPercent > (0.2 * bmr) && totalFatPercent < (0.35 * bmr)) score += 1;
+        if (saturatedFatPercent < (0.1 * bmr)) score += 1;
+        if (transFat === 0) score += 1;
+        if (cholesterol >= 0) score += 1;
+        if (sodium < 23) score += 1;
+        if (totalCarbohydratesPercent >= (0.45 * bmr) && totalCarbohydratesPercent <= (0.65 * bmr)) score += 1;
+        if (sugarsPercent <= (0.1 * bmr)) score += 1;
+        if (proteinPercent >= (0.25 * bmr) && protein <= (0.3 * bmr)) score += 1;
+        if (vitaminD || calcium || iron || potassium) score += 1;
+
+        if (gender === 'Male') {
+          if (dietaryFiber < 38) score += 1;
+        } else {
+          if (dietaryFiber < 25) score += 1;
+        }
+
+        return score;
+      }
     }
 
   };
@@ -261,7 +321,7 @@ const AnalysisPage = ({ navigation }) => {
   }
   else {
     return (
-      <SafeAreaView style={styles.view}>
+      <View>
         <View style={styles.navbar}>
           <TouchableOpacity
             style={[styles.box, { width: 40, height: 40 }]}
@@ -321,7 +381,7 @@ const AnalysisPage = ({ navigation }) => {
               source={image}
               style={styles.recommended}
             />
-  
+
           </View>
           <View style={styles.stats}>
             <View style={styles.icons}>
@@ -362,7 +422,7 @@ const AnalysisPage = ({ navigation }) => {
                 />
                 <Text style={{ fontSize: 16, marginLeft: 10 }}>High Fat</Text>
               </View>
-  
+
             </View>
           </View>
           <View style={styles.bottom}>
@@ -374,10 +434,10 @@ const AnalysisPage = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     );
   };
-  }
+}
 
 
 const styles = StyleSheet.create({
@@ -422,11 +482,11 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   chartText: {
-    fontSize: 12, 
-    fontWeight: 'bold', 
+    fontSize: 12,
+    fontWeight: 'bold',
     fontFamily: 'Roboto',
     marginHorizontal: 20,
-    marginBottom: 5, 
+    marginBottom: 5,
     textAlign: 'center'
   },
   rating: {
