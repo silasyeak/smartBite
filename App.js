@@ -8,7 +8,6 @@ import LoginPage from './components/LoginPage';
 import AnalysisPage from './components/AnalysisPage';
 import RegistrationPage from './components/RegistrationPage';
 import ProfilePage from './components/ProfilePage';
-import AnalysisPage from './components/AnalysisPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,7 +27,7 @@ export default function App() {
         <Stack.Screen
           name="LoginPage"
           component={LoginPage}
-        /> 
+        />
 
         <Stack.Screen
           name="AnalysisPage"
