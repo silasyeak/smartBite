@@ -16,25 +16,45 @@ const ProfilePage = () => {
     const user = auth.currentUser;
 
     const [image, setImage] = useState(null);
+    const [uri, setUri] = useState(null);
+
     const [height, setHeight] = useState(null);
     const [weight, setWeight] = useState(null);
     const [age, setAge] = useState(null);
     const [gender, setGender] = useState(null);
+    const [foodPreferences, setFoodPreferences] = useState(null);
+    const [foodAllergies, setFoodAllergies] = useState(null);
+    const [medicalHistory, setMedicalHistory] = useState(null);
+    const [pal, setPal] = useState(null);
+    const [healthGoal, setHealthGoal] = useState(null);
 
     const updateUserProfile = () => {
         // setDoc(doc(db, 'users', user.uid), {
         //     id: user.uid,
-        //     displayName: name,
-        //     photoURL: image,
-        //     job: job,
-        //     age: age,
-        //     bio: bio,
         //     timestamp: serverTimestamp()
         // }).then(() => {
         //     navigation.navigate('AnalysisPage');
         // }).catch(error => {
         //     Alert.alert(error.message);
         // });
+        setDoc(doc(db, 'users', 'brem'), {
+            id: 'brem',
+            photoURL: uri,
+            weight: weight,
+            height: height,
+            age: age,
+            gender: gender,
+            foodPreferences: foodPreferences,
+            foodAllergies: foodAllergies,
+            medicalHistory: medicalHistory,
+            pal: pal,
+            healthGoal: healthGoal,
+            timestamp: serverTimestamp()
+        }).then(() => {
+            navigation.navigate('AnalysisPage');
+        }).catch(error => {
+            Alert.alert(error.message);
+        });
     };
 
     const uploadImage = async () => {
@@ -42,9 +62,11 @@ const ProfilePage = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             quality: 1,
+            base64: true,
         })
         if (!result.cancelled) {
-            setImage(result.uri);
+            setImage(result.assets[0].uri);
+            setUri(result.uri)
         }
     }
 
@@ -99,9 +121,14 @@ const ProfilePage = () => {
 
                     <View style={styles.container}>
                         <View style={{ position: 'relative' }}>
-                            <Image source={require('../assets/profile.jpg')} style={styles.image} />
+                            {image !== null ? (
+                                <Image source={{ uri: image }} style={styles.image} />
+                            ) : (
+                                <Image source={require('../assets/profile.jpg')} style={styles.image} />
+                            )}
 
                             <TouchableOpacity style={styles.button} onPress={uploadImage}>
+
                                 <Image style={{ width: 25, height: 25, resizeMode: 'contain' }} source={require('../assets/camera.png')} />
                             </TouchableOpacity>
                         </View>
@@ -150,23 +177,9 @@ const ProfilePage = () => {
                                 styles={{ width: 100 }}
                                 onValueChange={(gender) => setGender(gender)}
                             >
+                                <Picker.Item label="Select Gender" value="" />
                                 <Picker.Item label="Male" value="Male" />
                                 <Picker.Item label="Female" value="Female" />
-                            </Picker>
-                        </View>
-                    </View>
-
-                    <View style={{ width: '80%' }}>
-                        <Text style={styles.label}>Health Goals:</Text>
-                        <View style={[styles.input, { paddingHorizontal: -20, justifyContent: 'center' }]}>
-                            <Picker
-                                selectedValue={gender}
-                                styles={{ width: 100 }}
-                                onValueChange={(gender) => setGender(gender)}
-                            >
-                                <Picker.Item label="Muscle Gain" value="muscleGain" />
-                                <Picker.Item label="Weight Loss" value="weightLoss" />
-                                <Picker.Item label="Maintain" value="maintain" />
                             </Picker>
                         </View>
                     </View>
@@ -175,12 +188,15 @@ const ProfilePage = () => {
                         <Text style={styles.label}>Food Preferences:</Text>
                         <View style={[styles.input, { paddingHorizontal: -20, justifyContent: 'center' }]}>
                             <Picker
-                                selectedValue={gender}
+                                selectedValue={foodPreferences}
                                 styles={{ width: 100 }}
-                                onValueChange={(gender) => setGender(gender)}
+                                onValueChange={(preference) => setFoodPreferences(preference)}
                             >
+                                <Picker.Item label="Select food preference" value="" />
                                 <Picker.Item label="None" value="none" />
                                 <Picker.Item label="Halal" value="halal" />
+                                <Picker.Item label="Paleo" value="paleo" />
+                                <Picker.Item label="Vegetarian" value="vegetarian" />
                             </Picker>
                         </View>
                     </View>
@@ -189,10 +205,11 @@ const ProfilePage = () => {
                         <Text style={styles.label}>Food Allergies:</Text>
                         <View style={[styles.input, { paddingHorizontal: -20, justifyContent: 'center' }]}>
                             <Picker
-                                selectedValue={gender}
+                                selectedValue={foodAllergies}
                                 styles={{ width: 100 }}
-                                onValueChange={(gender) => setGender(gender)}
+                                onValueChange={(allergy) => setFoodAllergies(allergy)}
                             >
+                                <Picker.Item label="Select food allergies" value="" />
                                 <Picker.Item label="None" value="none" />
                                 <Picker.Item label="Shellfish" value="shellfish" />
                                 <Picker.Item label="Dairy" value="dairy" />
@@ -205,10 +222,11 @@ const ProfilePage = () => {
                         <Text style={styles.label}>Medical History:</Text>
                         <View style={[styles.input, { paddingHorizontal: -20, justifyContent: 'center' }]}>
                             <Picker
-                                selectedValue={gender}
+                                selectedValue={medicalHistory}
                                 styles={{ width: 100 }}
-                                onValueChange={(gender) => setGender(gender)}
+                                onValueChange={(condition) => setMedicalHistory(condition)}
                             >
+                                <Picker.Item label="Select medical condition" value="" />
                                 <Picker.Item label="None" value="none" />
                                 <Picker.Item label="High Cholesterol" value="highCholesterol" />
                                 <Picker.Item label="High Blood Pressure" value="highBloodPressure" />
@@ -221,15 +239,37 @@ const ProfilePage = () => {
                         <Text style={styles.label}>Physical Activity Level:</Text>
                         <View style={[styles.input, { paddingHorizontal: -20, justifyContent: 'center' }]}>
                             <Picker
-                                selectedValue={gender}
+                                selectedValue={pal}
                                 styles={{ width: 100 }}
-                                onValueChange={(gender) => setGender(gender)}
+                                onValueChange={(level) => setPal(level)}
                             >
+                                <Picker.Item label="Select physical activity level" value="" />
                                 <Picker.Item label="None" value="none" />
                                 <Picker.Item label="Sedentary" value="sedentary" />
+                                <Picker.Item label="Lightly Active" value="light" />
+                                <Picker.Item label="Moderately Active" value="moderate" />
+                                <Picker.Item label="Very Active" value="very" />
                             </Picker>
                         </View>
                     </View>
+
+                    {foodAllergies === 'none' && medicalHistory === 'none' && (
+                        <View style={{ width: '80%' }}>
+                            <Text style={styles.label}>Health Goals:</Text>
+                            <View style={[styles.input, { paddingHorizontal: -20, justifyContent: 'center' }]}>
+                                <Picker
+                                    selectedValue={healthGoal}
+                                    styles={{ width: 100 }}
+                                    onValueChange={(goal) => setHealthGoal(goal)}
+                                >
+                                    <Picker.Item label="Select health goal" value="" />
+                                    <Picker.Item label="Muscle Gain" value="muscleGain" />
+                                    <Picker.Item label="Weight Loss" value="weightLoss" />
+                                    <Picker.Item label="Maintain" value="maintain" />
+                                </Picker>
+                            </View>
+                        </View>
+                    )}
 
                     <TouchableOpacity
                         onPress={updateUserProfile}
